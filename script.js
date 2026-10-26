@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = '';
 let currentLang = localStorage.getItem('appLang') || 'ar';
 let allPlacesData = [];
 let governatesData = [];
@@ -41,7 +41,7 @@ const translations = {
         freePrice: '✨ مجاني / حسب الطلب',
         egp: 'جنيه مصري',
         welcome: 'أهلاً بك، ',
-        allFilter: 'الكل (28 مكان)',
+        allFilter: 'الكل',
         restaurantsFilter: '🍽️ المطاعم',
         hotelsFilter: '🏨 الفنادق',
         entertainmentFilter: '🎡 أماكن سياحية وترفيه',
@@ -78,7 +78,7 @@ const translations = {
         freePrice: '✨ Free Entrance',
         egp: 'EGP',
         welcome: 'Welcome, ',
-        allFilter: 'All (28 Places)',
+        allFilter: 'All',
         restaurantsFilter: '🍽️ Restaurants',
         hotelsFilter: '🏨 Hotels',
         entertainmentFilter: '🎡 Tourism & Fun',
@@ -107,7 +107,8 @@ function toggleLanguage() {
 function applyLanguage(lang) {
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    document.getElementById('langBtn').innerText = lang === 'ar' ? 'English 🌐' : 'عربي 🌐';
+    const langBtn = document.getElementById('langBtn');
+    if (langBtn) langBtn.innerText = lang === 'ar' ? 'English 🌐' : 'عربي 🌐';
 
     document.querySelectorAll('[data-key]').forEach(elem => {
         const key = elem.getAttribute('data-key');
@@ -126,6 +127,7 @@ function applyLanguage(lang) {
 
 function checkUserAuthStatus() {
     const userArea = document.getElementById('userArea');
+    if (!userArea) return;
     const t = translations[currentLang];
     if (currentUser) {
         userArea.innerHTML = `
@@ -142,10 +144,14 @@ async function loadGovernates() {
     activeGovId = null;
     activeGovNameObj = null;
     activeGovDescObj = null;
-    document.getElementById('btnBackToGovs').style.display = 'none';
-    document.getElementById('sectionTitle').innerHTML = `<h2 class="gov-title-header">${translations[currentLang].mainTitle}</h2>`;
+    const backBtn = document.getElementById('btnBackToGovs');
+    if (backBtn) backBtn.style.display = 'none';
+    
+    const secTitle = document.getElementById('sectionTitle');
+    if (secTitle) secTitle.innerHTML = `<h2 class="gov-title-header">${translations[currentLang].mainTitle}</h2>`;
     
     const container = document.getElementById('mainContainer');
+    if (!container) return;
     container.innerHTML = `<div style="text-align:center; width:100%; font-size:18px; grid-column:1/-1;">... ⏳</div>`;
 
     try {
@@ -153,15 +159,15 @@ async function loadGovernates() {
         governatesData = await res.json();
 
         container.innerHTML = governatesData.map(gov => `
-            <div class="gov-card" onclick='openGovernatePlaces(${gov.GovernateID}, ${JSON.stringify(gov.GovernateName)}, ${JSON.stringify(gov.Description)})'>
-                <div class="gov-slider-container" id="slider-${gov.GovernateID}">
-                    <img src="${gov.Images[0]}" class="gov-slider-img active" alt="Gov">
-                    <img src="${gov.Images[1]}" class="gov-slider-img" alt="Gov">
-                    <img src="${gov.Images[2]}" class="gov-slider-img" alt="Gov">
+            <div class="gov-card" onclick='openGovernatePlaces(${gov.GovernateID || gov.id}, ${JSON.stringify(gov.GovernateName || gov.name)}, ${JSON.stringify(gov.Description || gov.description)})'>
+                <div class="gov-slider-container" id="slider-${gov.GovernateID || gov.id}">
+                    <img src="${gov.Images ? gov.Images[0] : gov.image}" class="gov-slider-img active" alt="Gov">
+                    ${gov.Images && gov.Images[1] ? `<img src="${gov.Images[1]}" class="gov-slider-img" alt="Gov">` : ''}
+                    ${gov.Images && gov.Images[2] ? `<img src="${gov.Images[2]}" class="gov-slider-img" alt="Gov">` : ''}
                 </div>
                 <div class="gov-info">
-                    <h3>📍 ${gov.GovernateName[currentLang]}</h3>
-                    <p style="font-size:0.9rem; color:#555; margin:8px 0; line-height:1.4;">${gov.Description[currentLang]}</p>
+                    <h3>📍 ${typeof (gov.GovernateName || gov.name) === 'object' ? (gov.GovernateName || gov.name)[currentLang] : (gov.GovernateName || gov.name)}</h3>
+                    <p style="font-size:0.9rem; color:#555; margin:8px 0; line-height:1.4;">${typeof (gov.Description || gov.description) === 'object' ? (gov.Description || gov.description)[currentLang] : (gov.Description || gov.description)}</p>
                     <span style="color:#1e3c72; font-weight:bold; font-size:0.9rem;">${translations[currentLang].clickToExplore} ←</span>
                 </div>
             </div>
@@ -176,10 +182,12 @@ async function loadGovernates() {
 
 function startGovImageSliders() {
     governatesData.forEach(gov => {
-        const sliderContainer = document.getElementById(`slider-${gov.GovernateID}`);
+        const govId = gov.GovernateID || gov.id;
+        const sliderContainer = document.getElementById(`slider-${govId}`);
         if (!sliderContainer) return;
         
         const images = sliderContainer.querySelectorAll('.gov-slider-img');
+        if (images.length <= 1) return;
         let currentIndex = 0;
 
         setInterval(() => {
@@ -194,20 +202,22 @@ function showGovernatesView() {
     loadGovernates();
 }
 
-// 2. فتح أماكن المحافظة مع إظهار التعريف بخط كبير وفلترة الأماكن
+// 2. فتح أماكن المحافظة
 async function openGovernatePlaces(govId, govNameObj, govDescObj, categoryFilter = 'all') {
     activeGovId = govId;
     activeGovNameObj = govNameObj;
     activeGovDescObj = govDescObj;
     currentCategoryFilter = categoryFilter;
 
-    document.getElementById('btnBackToGovs').style.display = 'inline-block';
+    const backBtn = document.getElementById('btnBackToGovs');
+    if (backBtn) backBtn.style.display = 'inline-block';
     const t = translations[currentLang];
 
-    // تكبير خط تعريف المحافظة
-    const descHtml = govDescObj ? `<div class="gov-description-large">${govDescObj[currentLang]}</div>` : '';
+    const govNameStr = typeof govNameObj === 'object' ? govNameObj[currentLang] : govNameObj;
+    const govDescStr = typeof govDescObj === 'object' ? govDescObj[currentLang] : govDescObj;
+
+    const descHtml = govDescStr ? `<div class="gov-description-large">${govDescStr}</div>` : '';
     
-    // شريط الفلترة الحية بين الأماكن داخل المحافظة
     const filterBarHtml = `
         <div class="internal-filter-bar">
             <button class="filter-btn ${categoryFilter === 'all' ? 'active' : ''}" onclick="filterGovernatePlaces('all')">${t.allFilter}</button>
@@ -218,19 +228,23 @@ async function openGovernatePlaces(govId, govNameObj, govDescObj, categoryFilter
         </div>
     `;
 
-    document.getElementById('sectionTitle').innerHTML = `
-        <h2 class="gov-title-header">${t.placesTitlePrefix} ${govNameObj[currentLang]}</h2>
-        ${descHtml}
-        ${filterBarHtml}
-    `;
+    const secTitle = document.getElementById('sectionTitle');
+    if (secTitle) {
+        secTitle.innerHTML = `
+            <h2 class="gov-title-header">${t.placesTitlePrefix} ${govNameStr}</h2>
+            ${descHtml}
+            ${filterBarHtml}
+        `;
+    }
 
     const container = document.getElementById('mainContainer');
+    if (!container) return;
     container.innerHTML = `<div style="text-align:center; width:100%; font-size:18px; grid-column:1/-1;">... ⏳</div>`;
 
     try {
         const url = categoryFilter === 'all' 
-            ? `${API_BASE}/places?governateId=${govId}` 
-            : `${API_BASE}/places?governateId=${govId}&categoryId=${categoryFilter}`;
+            ? `${API_BASE}/api/places?governateId=${govId}` 
+            : `${API_BASE}/api/places?governateId=${govId}&categoryId=${categoryFilter}`;
 
         const res = await fetch(url);
         allPlacesData = await res.json();
@@ -247,14 +261,19 @@ function filterGovernatePlaces(categoryFilter) {
 }
 
 function searchPlaces() {
-    const search = document.getElementById('searchInput').value;
+    const searchInput = document.getElementById('searchInput');
+    if (!searchInput) return;
+    const search = searchInput.value;
     if (!search) return;
 
     activeGovId = null;
-    document.getElementById('btnBackToGovs').style.display = 'inline-block';
-    document.getElementById('sectionTitle').innerHTML = `<h2 class="gov-title-header">${translations[currentLang].searchResultsPrefix} "${search}"</h2>`;
+    const backBtn = document.getElementById('btnBackToGovs');
+    if (backBtn) backBtn.style.display = 'inline-block';
+    
+    const secTitle = document.getElementById('sectionTitle');
+    if (secTitle) secTitle.innerHTML = `<h2 class="gov-title-header">${translations[currentLang].searchResultsPrefix} "${search}"</h2>`;
 
-    fetch(`${API_BASE}/places?search=${encodeURIComponent(search)}`)
+    fetch(`${API_BASE}/api/places?search=${encodeURIComponent(search)}`)
         .then(res => res.json())
         .then(data => {
             allPlacesData = data;
@@ -264,6 +283,7 @@ function searchPlaces() {
 
 function renderPlacesList(places) {
     const container = document.getElementById('mainContainer');
+    if (!container) return;
     const t = translations[currentLang];
 
     if (!places || places.length === 0) {
@@ -271,50 +291,71 @@ function renderPlacesList(places) {
         return;
     }
 
-    container.innerHTML = places.map(place => `
-        <div class="place-card">
-            <div class="place-img-holder">
-                <img src="${place.Image}" alt="${place.PlaceName[currentLang]}">
-                <span class="badge-category">${place.CategoryName[currentLang]}</span>
-            </div>
-            <div class="place-details">
-                <div class="place-header">
-                    <h3>${place.PlaceName[currentLang]}</h3>
-                    <span class="rating">⭐ ${place.Rating}</span>
+    container.innerHTML = places.map(place => {
+        const placeName = typeof place.PlaceName === 'object' ? place.PlaceName[currentLang] : (place.name || place.title);
+        const placeAddress = typeof place.Address === 'object' ? place.Address[currentLang] : place.address;
+        const placeDesc = typeof place.Description === 'object' ? place.Description[currentLang] : place.description;
+        const placeCat = typeof place.CategoryName === 'object' ? place.CategoryName[currentLang] : place.categoryId;
+        const placeImg = place.Image || place.image;
+        const placeRating = place.Rating || place.rating || '4.5';
+        const placePrice = place.TicketPrice || place.price;
+        const placeId = place.PlaceID || place.id;
+
+        return `
+            <div class="place-card">
+                <div class="place-img-holder">
+                    <img src="${placeImg}" alt="${placeName}">
+                    <span class="badge-category">${placeCat}</span>
                 </div>
-                <p class="gov-name">📍 ${place.Address[currentLang]}</p>
-                <p class="description">${place.Description[currentLang]}</p>
-                <div class="place-footer">
-                    <span class="price">${place.TicketPrice ? `🎟️ ${place.TicketPrice} ${t.egp}` : t.freePrice}</span>
-                    <button class="btn-details" onclick="openDetailsModal(${place.PlaceID})">${t.detailsBtn}</button>
+                <div class="place-details">
+                    <div class="place-header">
+                        <h3>${placeName}</h3>
+                        <span class="rating">⭐ ${placeRating}</span>
+                    </div>
+                    <p class="gov-name">📍 ${placeAddress}</p>
+                    <p class="description">${placeDesc}</p>
+                    <div class="place-footer">
+                        <span class="price">${placePrice ? `🎟️ ${placePrice} ${t.egp}` : t.freePrice}</span>
+                        <button class="btn-details" onclick="openDetailsModal(${placeId})">${t.detailsBtn}</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // التفاصيل والتعليقات
 function openDetailsModal(placeId) {
     activePlaceId = placeId;
-    const place = allPlacesData.find(p => p.PlaceID === placeId);
+    const place = allPlacesData.find(p => (p.PlaceID === placeId || p.id === placeId));
     if (!place) return;
     const t = translations[currentLang];
 
-    document.getElementById('modalImg').src = place.Image;
-    document.getElementById('modalTitle').innerText = place.PlaceName[currentLang];
-    document.getElementById('modalGovCat').innerText = `📍 ${place.Address[currentLang]} | 🏷️ ${place.CategoryName[currentLang]}`;
-    document.getElementById('modalDesc').innerText = place.Description[currentLang];
-    document.getElementById('modalPrice').innerText = place.TicketPrice ? `${place.TicketPrice} ${t.egp}` : t.freePrice;
-    document.getElementById('modalPhone').innerText = place.Phone || 'N/A';
-    document.getElementById('modalAddress').innerText = place.Address[currentLang];
-    document.getElementById('modalMapLink').href = place.MapLink;
+    const placeName = typeof place.PlaceName === 'object' ? place.PlaceName[currentLang] : (place.name || place.title);
+    const placeAddress = typeof place.Address === 'object' ? place.Address[currentLang] : place.address;
+    const placeDesc = typeof place.Description === 'object' ? place.Description[currentLang] : place.description;
+    const placeCat = typeof place.CategoryName === 'object' ? place.CategoryName[currentLang] : place.categoryId;
+    const placeImg = place.Image || place.image;
+    const placePrice = place.TicketPrice || place.price;
+    const placePhone = place.Phone || place.phone || 'N/A';
+    const placeMap = place.MapLink || place.mapUrl || '#';
 
-    renderReviews(place.Reviews);
+    document.getElementById('modalImg').src = placeImg;
+    document.getElementById('modalTitle').innerText = placeName;
+    document.getElementById('modalGovCat').innerText = `📍 ${placeAddress} | 🏷️ ${placeCat}`;
+    document.getElementById('modalDesc').innerText = placeDesc;
+    document.getElementById('modalPrice').innerText = placePrice ? `${placePrice} ${t.egp}` : t.freePrice;
+    document.getElementById('modalPhone').innerText = placePhone;
+    document.getElementById('modalAddress').innerText = placeAddress;
+    document.getElementById('modalMapLink').href = placeMap;
+
+    renderReviews(place.Reviews || place.reviews);
     document.getElementById('detailsModal').style.display = 'flex';
 }
 
 function renderReviews(reviews) {
     const list = document.getElementById('reviewsList');
+    if (!list) return;
     if (!reviews || reviews.length === 0) {
         list.innerHTML = `<p style="color:#777; font-size:0.85rem;">${currentLang === 'ar' ? 'لا توجد تقييمات سابقة.' : 'No reviews yet.'}</p>`;
         return;
@@ -323,7 +364,7 @@ function renderReviews(reviews) {
     list.innerHTML = reviews.map(r => `
         <div class="review-item">
             <div class="review-item-header">
-                <span>👤 ${r.userName}</span>
+                <span>👤 ${r.userName || r.name}</span>
                 <span>⭐ ${r.rating}/5</span>
             </div>
             <div class="review-item-comment">${r.comment}</div>
@@ -335,38 +376,53 @@ async function submitReview(e) {
     e.preventDefault();
     if (!activePlaceId) return;
 
-    const rating = document.getElementById('reviewRating').value;
-    const comment = document.getElementById('reviewComment').value;
+    const ratingElem = document.getElementById('reviewRating');
+    const commentElem = document.getElementById('reviewComment');
+    if (!ratingElem || !commentElem) return;
+
+    const rating = ratingElem.value;
+    const comment = commentElem.value;
     const userName = currentUser || (currentLang === 'ar' ? 'زائر' : 'Visitor');
 
     try {
-        const res = await fetch(`${API_BASE}/places/${activePlaceId}/reviews`, {
+        const res = await fetch(`${API_BASE}/api/places/${activePlaceId}/reviews`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userName, rating, comment })
         });
         const data = await res.json();
 
-        const place = allPlacesData.find(p => p.PlaceID === activePlaceId);
+        const place = allPlacesData.find(p => (p.PlaceID === activePlaceId || p.id === activePlaceId));
         if (place) {
             place.Reviews = data.reviews;
             renderReviews(place.Reviews);
         }
 
-        document.getElementById('reviewComment').value = '';
+        commentElem.value = '';
         alert(currentLang === 'ar' ? 'تم إضافة تقييمك بنجاح!' : 'Review submitted successfully!');
     } catch (err) {
         alert('Failed');
     }
 }
 
-function closeDetailsModal() { document.getElementById('detailsModal').style.display = 'none'; }
-function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; }
-function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
+function closeDetailsModal() { 
+    const modal = document.getElementById('detailsModal');
+    if (modal) modal.style.display = 'none'; 
+}
+function openLoginModal() { 
+    const modal = document.getElementById('loginModal');
+    if (modal) modal.style.display = 'flex'; 
+}
+function closeLoginModal() { 
+    const modal = document.getElementById('loginModal');
+    if (modal) modal.style.display = 'none'; 
+}
 
 function handleLogin(e) {
     e.preventDefault();
-    const name = document.getElementById('loginName').value;
+    const loginNameElem = document.getElementById('loginName');
+    if (!loginNameElem) return;
+    const name = loginNameElem.value;
     currentUser = name;
     localStorage.setItem('userName', name);
     checkUserAuthStatus();
