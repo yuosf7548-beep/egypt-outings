@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع خروجات في مصر | Egypt Outings</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- الهيدر وأزرار التحكم -->
+    <header>
+        <div class="header-top">
+            <div class="logo">📍 <span data-key="logo">دليل خروجات مصر</span></div>
+            <div class="header-controls">
+                <button class="btn-lang" onclick="toggleLanguage()" id="langBtn">English 🌐</button>
+                <div id="userArea">
+                    <button class="btn-auth" id="authBtn" onclick="openLoginModal()" data-key="login">تسجيل الدخول</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="hero-content">
+            <h1 data-key="heroTitle">اكتشف أروع الخروجات والأماكن في مصر</h1>
+            <p data-key="heroSub">اختر المحافظة وتعرف على الأسعار والتقييمات ورقم الاتصال والموقع</p>
+            
+            <div class="search-hero">
+                <input type="text" id="searchInput" placeholder="ابحث عن اسم مكان، مطعم، فندق، أو محافظة..." data-key-placeholder="searchPlaceholder">
+                <button onclick="searchPlaces()" data-key="searchBtn">بحث 🔍</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- شريط العودة والعناوين -->
+    <div class="section-title-container">
+        <button id="btnBackToGovs" class="btn-back" onclick="showGovernatesView()" style="display: none;" data-key="backBtn">← العودة للمحافظات</button>
+        <h2 id="sectionTitle" data-key="mainTitle">استكشف المحافظات</h2>
+    </div>
+
+    <!-- شبكة المحافظات والأماكن -->
+    <main id="mainContainer"></main>
+
+    <!-- نافذة التفاصيل والتعليقات -->
+    <div id="detailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeDetailsModal()">&times;</span>
+            <img id="modalImg" src="" alt="Place">
+            <h2 id="modalTitle"></h2>
+            <p id="modalGovCat" class="modal-gov-cat"></p>
+            <p id="modalDesc" class="modal-desc"></p>
+            
+            <div class="modal-info">
+                <p><strong data-key="priceLabel">🎟️ سعر التذكرة:</strong> <span id="modalPrice"></span></p>
+                <p><strong data-key="phoneLabel">📞 رقم الاتصال:</strong> <span id="modalPhone"></span></p>
+                <p><strong data-key="addressLabel">📍 العنوان التفصيلي:</strong> <span id="modalAddress"></span></p>
+            </div>
+            
+            <a id="modalMapLink" href="#" target="_blank" class="btn-map" data-key="mapBtn">🗺️ فتح الموقع على الخريطة (Google Maps)</a>
+
+            <hr class="modal-divider">
+            <h3 data-key="reviewsTitle">💬 تقييمات وتعليقات الزوار</h3>
+            
+            <div id="reviewsList" class="reviews-list"></div>
+
+            <form id="addReviewForm" onsubmit="submitReview(event)" class="review-form">
+                <h4 data-key="addReviewHeader">أضف تقييمك ورأيك:</h4>
+                <div class="rating-select">
+                    <label data-key="ratingLabel">التقييم:</label>
+                    <select id="reviewRating">
+                        <option value="5">⭐⭐⭐⭐⭐</option>
+                        <option value="4">⭐⭐⭐⭐</option>
+                        <option value="3">⭐⭐⭐</option>
+                        <option value="2">⭐⭐</option>
+                        <option value="1">⭐</option>
+                    </select>
+                </div>
+                <textarea id="reviewComment" placeholder="اكتب تجربتك أو رأيك هنا..." data-key-placeholder="reviewPlaceholder" required></textarea>
+                <button type="submit" class="btn-submit-review" data-key="submitReviewBtn">إرسال التقييم ✍️</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة تسجيل الدخول -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content auth-modal">
+            <span class="close-btn" onclick="closeLoginModal()">&times;</span>
+            <h2 data-key="loginHeader">تسجيل الدخول</h2>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label data-key="nameLabel">الاسم (ليظهر في الموقع)</label>
+                    <input type="text" id="loginName" placeholder="أحمد علي" required>
+                </div>
+                <div class="form-group">
+                    <label data-key="emailLabel">البريد الإلكتروني</label>
+                    <input type="email" id="loginEmail" placeholder="example@domain.com" required>
+                </div>
+                <div class="form-group">
+                    <label data-key="passwordLabel">كلمة المرور</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-submit" data-key="loginSubmitBtn">دخول</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

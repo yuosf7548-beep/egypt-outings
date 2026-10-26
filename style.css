@@ -1,0 +1,170 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f4f6f9;
+    color: #333;
+}
+
+header {
+    background: linear-gradient(rgba(15, 32, 67, 0.75), rgba(27, 20, 41, 0.85)), 
+                url('https://images.unsplash.com/photo-1539650116574-8efeb43e2750?auto=format&fit=crop&w=1600&q=80') center/cover;
+    color: white;
+    padding: 20px 30px 60px;
+    text-align: center;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1300px;
+    margin: 0 auto 30px;
+}
+
+.logo { font-size: 1.6rem; font-weight: bold; }
+.header-controls { display: flex; align-items: center; gap: 15px; }
+
+.btn-lang {
+    background: rgba(255, 255, 255, 0.2);
+    color: white; border: 1px solid rgba(255, 255, 255, 0.4);
+    padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: bold;
+}
+
+.btn-auth, .btn-logout {
+    background: #ff9800; color: white; border: none; padding: 10px 22px;
+    border-radius: 8px; font-weight: bold; cursor: pointer;
+}
+
+.hero-content h1 { font-size: 2.6rem; margin-bottom: 12px; }
+.hero-content p { font-size: 1.15rem; margin-bottom: 35px; opacity: 0.9; }
+
+.search-hero {
+    max-width: 700px; margin: 0 auto; display: flex;
+    background: white; border-radius: 50px; padding: 6px 10px;
+}
+
+.search-hero input { flex: 1; border: none; outline: none; padding: 12px 20px; font-size: 1rem; }
+.search-hero button { background: #1e3c72; color: white; border: none; padding: 12px 30px; border-radius: 50px; font-weight: bold; cursor: pointer; }
+
+.section-title-container {
+    max-width: 1350px; margin: 30px auto 20px; padding: 0 20px;
+    display: flex; flex-direction: column; gap: 15px;
+}
+
+/* تكبير وتوضيح الخط الخاص بتعريف المحافظة */
+.gov-title-header {
+    font-size: 2rem;
+    color: #1e3c72;
+    font-weight: bold;
+}
+
+.gov-description-large {
+    font-size: 1.15rem; /* تم تكبير الخط ليكون واضحاً وممتازاً */
+    color: #444;
+    line-height: 1.7;
+    background: #ffffff;
+    padding: 15px 20px;
+    border-radius: 12px;
+    border-right: 5px solid #1e3c72;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.btn-back {
+    background: #1e3c72; color: white; border: none; padding: 10px 20px;
+    border-radius: 8px; cursor: pointer; font-weight: bold; width: fit-content;
+}
+
+/* شريط الفلاتر الحية داخل المحافظة */
+.internal-filter-bar {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;
+}
+
+.filter-btn {
+    background: #e9ecef; border: none; padding: 10px 18px;
+    border-radius: 20px; cursor: pointer; font-weight: bold; color: #555; transition: 0.3s;
+}
+
+.filter-btn.active, .filter-btn:hover {
+    background: #1e3c72; color: white;
+}
+
+#mainContainer {
+    max-width: 1350px; margin: 0 auto 50px; padding: 0 20px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 25px;
+}
+
+.gov-card {
+    background: white; border-radius: 16px; overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); cursor: pointer; transition: 0.3s;
+}
+
+.gov-card:hover { transform: translateY(-7px); }
+
+.gov-slider-container {
+    position: relative; width: 100%; height: 200px; overflow: hidden; background: #e9ecef;
+}
+
+.gov-slider-img {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
+    opacity: 0; transition: opacity 1.2s ease-in-out;
+}
+
+.gov-slider-img.active { opacity: 1; }
+
+.gov-info { padding: 18px; text-align: center; }
+.gov-info h3 { font-size: 1.3rem; color: #1e3c72; margin-bottom: 8px; }
+
+.place-card {
+    background: white; border-radius: 16px; overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; transition: 0.3s;
+}
+
+.place-card:hover { transform: translateY(-5px); }
+.place-img-holder { height: 190px; position: relative; }
+.place-img-holder img { width: 100%; height: 100%; object-fit: cover; }
+.badge-category { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.75); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; }
+
+.place-details { padding: 18px; display: flex; flex-direction: column; flex: 1; }
+.place-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.place-header h3 { font-size: 1.15rem; color: #1e3c72; }
+.rating { color: #ffa000; font-weight: bold; font-size: 0.9rem; }
+.gov-name { font-size: 0.85rem; color: #777; margin-bottom: 10px; }
+.description { font-size: 0.88rem; color: #555; line-height: 1.5; margin-bottom: 18px; flex: 1; }
+.place-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 12px; }
+.price { font-size: 0.85rem; font-weight: bold; color: #2e7d32; }
+.btn-details { background: #2a5298; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+
+/* Modal */
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }
+.modal-content { background: white; padding: 25px; border-radius: 16px; max-width: 550px; width: 92%; position: relative; max-height: 88vh; overflow-y: auto; }
+.close-btn { position: absolute; top: 15px; font-size: 1.8rem; cursor: pointer; color: #666; }
+body[dir="rtl"] .close-btn { left: 15px; } body[dir="ltr"] .close-btn { right: 15px; }
+
+#modalImg { width: 100%; height: 220px; object-fit: cover; border-radius: 10px; margin-bottom: 15px; }
+.modal-gov-cat { color: #777; font-size: 0.9rem; margin-bottom: 10px; }
+.modal-desc { font-size: 0.95rem; line-height: 1.5; margin-bottom: 15px; }
+.modal-info p { margin-bottom: 8px; font-size: 0.9rem; }
+.btn-map { display: block; text-align: center; background: #27ae60; color: white; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; margin: 15px 0; }
+.modal-divider { margin: 20px 0; border: 0; border-top: 1px solid #ddd; }
+.reviews-list { max-height: 160px; overflow-y: auto; margin: 15px 0; display: flex; flex-direction: column; gap: 10px; }
+.review-item { background: #f9f9f9; padding: 10px 14px; border-radius: 8px; }
+body[dir="rtl"] .review-item { border-right: 4px solid #1e3c72; } body[dir="ltr"] .review-item { border-left: 4px solid #1e3c72; }
+.review-item-header { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: bold; margin-bottom: 4px; }
+.review-item-comment { font-size: 0.85rem; color: #444; }
+.review-form textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; margin: 10px 0; outline: none; height: 70px; resize: none; }
+.rating-select { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.rating-select select { padding: 6px; border-radius: 6px; border: 1px solid #ccc; }
+.btn-submit-review { background: #1e3c72; color: white; border: none; padding: 10px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
+/* Auth */
+.auth-modal h2 { margin-bottom: 20px; color: #1e3c72; }
+.form-group { margin-bottom: 15px; }
+body[dir="rtl"] .form-group { text-align: right; } body[dir="ltr"] .form-group { text-align: left; }
+.form-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; }
+.form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; outline: none; }
+.btn-submit { width: 100%; background: #1e3c72; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
